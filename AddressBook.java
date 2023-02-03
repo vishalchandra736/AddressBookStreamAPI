@@ -1,9 +1,7 @@
 package com.blz.addressbookstreamapi;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AddressBook {
     static Scanner sc = new Scanner(System.in);
@@ -20,14 +18,15 @@ public class AddressBook {
                 System.out.println("2. Edit an Existing Address Book");
                 System.out.println("3. Delete an Existing Address Book");
                 System.out.println("4. Display Address Book List");
-                System.out.println("5. Display all Address Books");
+                System.out.println("5. List all Address Books");
+                System.out.println("6. Search for");
                 System.out.println("0. Exit");
                 System.out.print("\nEnter your choice : ");
                 choice = sc.nextInt();
 
-                if (!(choice >=0 && choice <= 5))
+                if (!(choice >=0 && choice <= 6))
                     System.out.println("\nInvalid choice!\nPlease try again.\n");
-            }while (!(choice >=0 && choice <= 5));
+            }while (!(choice >=0 && choice <= 6));
 
             switch (choice)
             {
@@ -47,8 +46,12 @@ public class AddressBook {
                     displayAddressBookList();
                     break;
 
-                case  5:
+                case  5 :
                     displayAllAddressBooks();
+                    break;
+
+                case  6 :
+                    searchOperation();
                     break;
 
                 case 0 :
@@ -56,6 +59,69 @@ public class AddressBook {
                     break;
             }
         }while(choice != 0);
+    }
+
+    public void searchOperation() {
+        int  choice = 0;
+        do {
+            System.out.println("\nSearch for Persons ");
+            System.out.println("1. By City");
+            System.out.println("2. By State");
+            System.out.print("\nEnter your choice : ");
+            choice = sc.nextInt();
+
+            if (!(choice ==1 || choice == 2))
+                System.out.println("\nInvalid choice!\nPlease try again.\n");
+        }while (!(choice ==1 || choice == 2));
+
+        switch (choice)
+        {
+            case 1 :
+                searchByCity();
+                break;
+
+            case 2 :
+                searchByState();
+                break;
+
+            default :
+                break;
+        }
+    }
+
+    public void searchByCity() {
+        System.out.println("Enter the City : ");
+        String searchCity = sc.next();
+        System.out.println();
+
+        List<String> cityEntries = new ArrayList<>();
+        for (Map.Entry<String, ArrayList<Contact>> book : addressBookMap.entrySet()) {
+            List<String> matchingCity = book.getValue().stream().filter(entry -> entry.address.city.equalsIgnoreCase(searchCity)).map(entry -> entry.getFirstName()).collect(Collectors.toList());
+            cityEntries.addAll(matchingCity);
+        }
+
+        if (cityEntries.size() > 0)
+            System.out.println("\nPersons in '" + searchCity + "' city : " + cityEntries);
+        else
+            System.out.println("\nNo Persons information found in '" + searchCity + "' city.");
+    }
+
+    public void searchByState() {
+        System.out.println("Enter the State : ");
+        String searchState = sc.next();
+        System.out.println();
+
+        List<String> stateEntries = new ArrayList<>();
+        for (Map.Entry<String, ArrayList<Contact>> book : addressBookMap.entrySet()) {
+            Collectors Collectors = null;
+            List<String> matchingState = book.getValue().stream().filter(entry -> entry.address.state.equalsIgnoreCase(searchState)).map(entry -> entry.getFirstName()).collect(Collectors.toList());
+            stateEntries.addAll(matchingState);
+        }
+
+        if (stateEntries.size() > 0)
+            System.out.println("\nPersons in '" + searchState + "' city : " + stateEntries);
+        else
+            System.out.println("\nNo Persons information found in '" + searchState + "' city.");
     }
 
     public void addAddressBook() {
